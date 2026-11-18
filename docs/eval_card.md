@@ -70,7 +70,7 @@ Bằng chứng: [spec v2](../src/config/metric_spec_v2.yaml) · [baseline v2](..
 
 **Phạm vi pilot:** đánh giá offline luồng xử lý claim hoàn tiền. Kết quả phục vụ quyết định merge code trong repo. Chi phí ghi trong báo cáo là chi phí mô phỏng. Chưa đo hiệu quả, chi phí API hoặc độ trễ trên người dùng thật.
 
-**Giới hạn:** v1 có 14 item, v2 có 28 item, mỗi item chỉ chạy 5 seed. Nếu một lỗi xảy ra độc lập với xác suất 1/3 ở mỗi seed, xác suất cả 5 lần đều bỏ sót lỗi vẫn khoảng 13%: `(2/3)^5`. Judge được đánh giá bằng replay. Bằng chứng Advanced còn chờ xác nhận gồm mutation scorecard, bốn trap trả `exit 1` và kết quả CI `eval-gate-v2`.
+**Giới hạn:** v1 có 14 item, v2 có 28 item, mỗi item chỉ chạy 5 seed. Nếu một lỗi xảy ra độc lập với xác suất 1/3 ở mỗi seed, xác suất cả 5 lần đều bỏ sót lỗi vẫn khoảng 13%: `(2/3)^5`. Judge được đánh giá bằng replay. Trên bộ public v2, mutation score đạt 3/3, false alarms 0. Riêng slice_regression chỉ bị chặn bởi slice:money_movement/refund_amount_correct với sàn 0.95. Cả bốn trap đều trả exit 1 — blocked: integrity, gồm kết quả grader bị thiếu/NaN, bỏ dòng thất bại, chỉ giữ seed có lợi và nới lỏng spec.
 
 **Khi tăng eval-set version:** tăng phiên bản khi thêm hoặc bỏ case, đổi nhãn chuẩn, hoặc thay cách gắn slice làm thay đổi ý nghĩa phép so sánh. Khi đó sinh lại SHA và baseline. Khi chỉ sửa agent, giữ cùng tập và seed để so sánh theo cặp. Với cùng phiên bản eval set, ngưỡng chỉ được siết chặt. Nếu đổi grader làm thay đổi cách tính điểm, ghi lại phiên bản grader và chấm lại baseline trước khi so sánh.
 EOF

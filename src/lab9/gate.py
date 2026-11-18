@@ -21,6 +21,8 @@ from lab8.console import utf8_stdio
 from lab9 import stats
 from lab9.eval import SPEC, load_spec, per_item
 
+from lab9.graders import GRADERS
+
 
 def _finite_number(value: Any) -> bool:
     """Return True when value is a finite real number."""
@@ -288,30 +290,20 @@ def integrity_check(
         )
 
     # Only row-level metrics are required on every trial.
-    row_metrics = [
-        m.get("id")
-        for m in spec.get("metrics", [])
-        if isinstance(m, dict)
-        and m.get("id")
-        and m.get("level") != "system"
-        and m.get("grader")
+    row_metric_ids = [
+    metric["id"] for metric in spec["metrics"]
+    if metric["id"] in GRADERS
     ]
 
     for index, row in enumerate(rows):
         if not isinstance(row, dict):
-            continue
-
-        for mid in row_metrics:
-            value = row.get(mid)
-
+            continue  # _index_rows bên dưới sẽ ghi lỗi "malformed row"
+        for metric_id in row_metric_ids:
+            value = row.get(metric_id)
             if value is None:
-                problems.append(
-                    f"PR row {index} has missing graded metric {mid}"
-                )
-            elif isinstance(value, Real) and not _finite_number(value):
-                problems.append(
-                    f"PR row {index} has non-finite metric {mid}"
-                )
+                problems.append(f"PR row {index} has missing graded metric {metric_id}")
+            elif not isinstance(value, bool):
+                problems.append(f"PR row {index} has invalid grader result {metric_id}")
 
     # 4. Check item-seed uniqueness and compare with baseline.
     pr_rows = _index_rows(pr, "PR", problems)

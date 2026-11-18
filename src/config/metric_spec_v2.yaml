@@ -82,6 +82,7 @@ slices:
 
   - name: money_movement
     metric: refund_amount_correct
+    min: 0.95
     no_significant_drop: true
     blocking: true
 
